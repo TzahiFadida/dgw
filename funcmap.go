@@ -9,11 +9,26 @@ var tmplFuncMap = template.FuncMap{
 	"createInsertSQL":            createInsertSQL,
 	"createInsertParams":         createInsertParams,
 	"createInsertScan":           createInsertScan,
+	"createSelectSQL":        createSelectSQL,
 	"createSelectByPkSQL":        createSelectByPkSQL,
 	"createSelectByPkFuncParams": createSelectByPkFuncParams,
 	"createSelectByPkSQLParams":  createSelectByPkSQLParams,
 	"createSelectByPkScan":       createSelectByPkScan,
 }
+func createSelectSQL(st *Struct) string {
+	var sql string
+	var colNames []string
+	var pkNames []string
+	for _, c := range st.Table.Columns {
+		if c.IsPrimaryKey {
+			pkNames = append(pkNames, c.Name)
+		}
+		colNames = append(colNames, c.Name)
+	}
+	sql = "SELECT " + flatten(colNames, ", ") + " FROM " + st.Table.Name
+	return sql
+}
+
 
 func createSelectByPkSQL(st *Struct) string {
 	var sql string
